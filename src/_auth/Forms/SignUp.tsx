@@ -7,12 +7,16 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from "@/lib/Validations"
 import Loader from "@/components/Shared/Loader"
 import { Link } from "react-router-dom"
+import axios from 'axios'
+import CustomToaster from "@/components/Shared/CustomToaster"
+import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react"
 
 
 
 const SignUp = () => {
-    
-    const isLoading = false
+
+    const [isLoading, setIsLoading] = useState(false);
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof SignUpValidation>>({
@@ -26,10 +30,26 @@ const SignUp = () => {
     })
 
     // 2. Define a submit handler.
-    const handleSignup = (values: z.infer<typeof SignUpValidation>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    const handleSignup = async (values: z.infer<typeof SignUpValidation>) => {
+        if (values.password !== values.password2) {
+            CustomToaster('Verifique las Contraseñas', 'error', 'top-center')
+            return
+        }
+        setIsLoading(true);
+        try {
+            const { data } = await axios.post('http://localhost:4000/api/users', {
+                name: values.nombre,
+                email: values.email,
+                password: values.password
+            })
+            await CustomToaster(data.msg, 'success', 'top-center');
+            // CustomToaster (data.msg, 'info', 'top-left');
+            
+        } catch (error) {
+            CustomToaster(error.response.data, 'error', 'top-center');
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (

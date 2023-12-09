@@ -25,7 +25,7 @@ const SignIn = () => {
     })
 
     // 2. Define a submit handler.
-    const handleSignup = (values: z.infer<typeof SignInValidation>) => {
+    const handleSignin = (values: z.infer<typeof SignInValidation>) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         console.log(values)
@@ -42,7 +42,7 @@ const SignIn = () => {
                         Para Usar UpTask, por favor registre su Cuenta
                     </p>
                 </div>
-                <form onSubmit={form.handleSubmit(handleSignup)} className="flex flex-col gap-5 w-full mt-4">
+                <form onSubmit={form.handleSubmit(handleSignin)} className="flex flex-col gap-5 w-full mt-4">
                     <FormField
                         control={form.control}
                         name="nombre"

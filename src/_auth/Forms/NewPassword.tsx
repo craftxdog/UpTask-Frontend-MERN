@@ -23,7 +23,7 @@ const NewPassword = () => {
     })
 
     // 2. Define a submit handler.
-    const handleSignup = (values: z.infer<typeof NewPasswordValidation>) => {
+    const handleNewPass = (values: z.infer<typeof NewPasswordValidation>) => {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         console.log(values)
@@ -40,7 +40,7 @@ const NewPassword = () => {
                         Reestablece Tu Password y No Pierdas Acceso
                     </p>
                 </div>
-                <form onSubmit={form.handleSubmit(handleSignup)} className="flex flex-col gap-5 w-full mt-4">
+                <form onSubmit={form.handleSubmit(handleNewPass)} className="flex flex-col gap-5 w-full mt-4">
                     <FormField
                         control={form.control}
                         name="password"

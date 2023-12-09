@@ -7,6 +7,8 @@ import { Home } from "./_root/Pages"
 import ForgetPassword from "./_auth/Forms/ForgetPassword"
 import NewPassword from "./_auth/Forms/NewPassword"
 import ConfirmarCuenta from "./_auth/Forms/ConfirmarCuenta"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -14,6 +16,7 @@ function App() {
   return (
     <>
       <main className="flex h-screen">
+        <ToastContainer />
         <Routes>
           {/* public routes */}
           <Route element={<AuthLayout />}>

@@ -23,7 +23,7 @@ const ForgetPassword = () => {
     })
 
     // 2. Define a submit handler.
-    const handleSignup = (values: z.infer<typeof ForgetPasswordValidation>) => {
+    const handleForgetPass = (values: z.infer<typeof ForgetPasswordValidation>) => {
 
         console.log(values)
     }
@@ -39,7 +39,7 @@ const ForgetPassword = () => {
                         Recupera tu Acceso y No Pierdas Tus Proyectos
                     </p>
                 </div>
-                <form onSubmit={form.handleSubmit(handleSignup)} className="flex flex-col gap-5 w-full mt-4">
+                <form onSubmit={form.handleSubmit(handleForgetPass)} className="flex flex-col gap-5 w-full mt-4">
                     <FormField
                         control={form.control}
                         name="email"
