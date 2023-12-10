@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input"
 import { ForgetPasswordValidation } from "@/lib/Validations"
 import Loader from "@/components/Shared/Loader"
 import { Link } from "react-router-dom"
-
+import CustomToaster from "@/components/Shared/CustomToaster"
+import 'react-toastify/dist/ReactToastify.css';
+import AxiosClient from "@/config/AxiosClient"
 
 
 const ForgetPassword = () => {
-
     const isLoading = false
 
     // 1. Define your form.
@@ -23,9 +24,19 @@ const ForgetPassword = () => {
     })
 
     // 2. Define a submit handler.
-    const handleForgetPass = (values: z.infer<typeof ForgetPasswordValidation>) => {
-
-        console.log(values)
+    const handleForgetPass = async (values: z.infer<typeof ForgetPasswordValidation>) => {
+        if (values.email === ''){
+            CustomToaster("El email es Obligatorio", "info", "top-left")
+            return
+        }
+        try {
+            const { data } = await AxiosClient.post(`/users/olvide-password`,{
+                email:values.email
+            })
+            CustomToaster(data.msg, "success", "top-center")
+        } catch (error) {
+            CustomToaster(error.response.data.msg, "error", "top-left")
+        }
     }
 
     return (

@@ -6,10 +6,30 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NewPasswordValidation } from "@/lib/Validations"
 import Loader from "@/components/Shared/Loader"
-
+import CustomToaster from "@/components/Shared/CustomToaster"
+import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router-dom"
+import AxiosClient from "@/config/AxiosClient"
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const NewPassword = () => {
+    const [tokenValido, setTokenValido] = useState(false)
+    const [passwordMdificado, setPasswordMdificado] = useState(false)
+    const params = useParams()
+    const { token } = params
+
+    useEffect(() => {
+        const comprobarToken = async () => {
+            try {
+                await AxiosClient(`/users/olvide-password/${token}`)
+                setTokenValido(true)
+            } catch (error) {
+                CustomToaster(error.response.data.msg, 'error', 'top-left')
+            }
+        }
+        comprobarToken()
+    }, [])
 
     const isLoading = false
 
@@ -23,10 +43,22 @@ const NewPassword = () => {
     })
 
     // 2. Define a submit handler.
-    const handleNewPass = (values: z.infer<typeof NewPasswordValidation>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    const handleNewPass = async (values: z.infer<typeof NewPasswordValidation>) => {
+        if (values.password !== values.password2 || values.password.length < 0 || values.password2.length < 0) {
+            CustomToaster('Verifique las Contraseñas', 'info', 'top-left')
+            return
+        }
+        try {
+            const url = `/users/olvide-password/${token}`
+            const { data } = await AxiosClient.post(url, {
+                password: values.password
+            })
+            CustomToaster(data.msg, 'success', 'top-center')
+            setPasswordMdificado(true)
+        } catch (error) {
+            setPasswordMdificado(false)
+            CustomToaster(error.response.data.msg, 'info', 'top-left')
+        }
     }
 
     return (
@@ -40,45 +72,53 @@ const NewPassword = () => {
                         Reestablece Tu Password y No Pierdas Acceso
                     </p>
                 </div>
-                <form onSubmit={form.handleSubmit(handleNewPass)} className="flex flex-col gap-5 w-full mt-4">
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Contraseña</FormLabel>
-                                <FormControl>
-                                    <Input type="password" placeholder="Escribe una Contraseña Fuerte" {...field} className="shad-input" />
-                                </FormControl>
-                                <FormDescription>
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="password2"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Repetir Contraseña</FormLabel>
-                                <FormControl>
-                                    <Input type="password" placeholder="Repite la Contraseña Anterior" {...field} className="shad-input" />
-                                </FormControl>
-                                <FormDescription>
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit" className="shad-button_primary">
-                        {isLoading ? (
-                            <div className="flex-center gap-2">
-                                <Loader />Loading...
-                            </div>
-                        ) : "Guardar Contraseña"}
-                    </Button>
-                </form>
+                {tokenValido && (
+                    <form onSubmit={form.handleSubmit(handleNewPass)} className="flex flex-col gap-5 w-full mt-4">
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Contraseña</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Escribe una Contraseña Fuerte" {...field} className="shad-input" />
+                                    </FormControl>
+                                    <FormDescription>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password2"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Repetir Contraseña</FormLabel>
+                                    <FormControl>
+                                        <Input type="password" placeholder="Repite la Contraseña Anterior" {...field} className="shad-input" />
+                                    </FormControl>
+                                    <FormDescription>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="shad-button_primary">
+                            {isLoading ? (
+                                <div className="flex-center gap-2">
+                                    <Loader />Loading...
+                                </div>
+                            ) : "Guardar Contraseña"}
+                        </Button>
+                    </form>
+                )}
+                {passwordMdificado && (
+                    <Link
+                        className='block text-center my-5 text-slate-50 uppercase text-sm'
+                        to={'/sign-in'}
+                    >Puedes Iniciar Sesión</Link>
+                )}
             </div>
         </Form>
     )

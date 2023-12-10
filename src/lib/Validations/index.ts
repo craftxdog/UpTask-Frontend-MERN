@@ -24,7 +24,7 @@ export const SignInValidation = z.object({
 })
 
 export const ForgetPasswordValidation = z.object({
-    email: z.string().email(),
+    email: z.string().email({message:"Verifique el E-mail"}),
 })
 
 export const NewPasswordValidation = z.object({

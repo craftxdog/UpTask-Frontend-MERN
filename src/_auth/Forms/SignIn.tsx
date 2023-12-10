@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SignInValidation } from "@/lib/Validations/index.ts"
 import Loader from "@/components/Shared/Loader"
-import { Link } from "react-router-dom"
-
-
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
+import 'react-toastify/dist/ReactToastify.css';
+import CustomToaster from "@/components/Shared/CustomToaster"
+import AxiosClient from "@/config/AxiosClient"
 
 const SignIn = () => {
     
@@ -25,10 +27,16 @@ const SignIn = () => {
     })
 
     // 2. Define a submit handler.
-    const handleSignin = (values: z.infer<typeof SignInValidation>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    const handleSignin = async (values: z.infer<typeof SignInValidation>) => {
+        try {
+            const { data } = await AxiosClient.post('/users/login', {
+                email:values.email,
+                password:values.password
+            })
+            CustomToaster(data.msg, 'success', 'top-center')
+        } catch (error) {
+            CustomToaster(error.response.data.msg, 'error', 'top-right')
+        }
     }
 
     return (

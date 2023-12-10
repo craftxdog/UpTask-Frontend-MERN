@@ -7,12 +7,10 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from "@/lib/Validations"
 import Loader from "@/components/Shared/Loader"
 import { Link } from "react-router-dom"
-import axios from 'axios'
+import AxiosClient from "@/config/AxiosClient"
 import CustomToaster from "@/components/Shared/CustomToaster"
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from "react"
-
-
 
 const SignUp = () => {
 
@@ -37,7 +35,7 @@ const SignUp = () => {
         }
         setIsLoading(true);
         try {
-            const { data } = await axios.post('http://localhost:4000/api/users', {
+            const { data } = await AxiosClient.post(`/users`, {
                 name: values.nombre,
                 email: values.email,
                 password: values.password
